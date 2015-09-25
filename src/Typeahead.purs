@@ -1,7 +1,9 @@
 module Typeahead where
 
 import Prelude
-import Control.Monad.Eff.JQuery
+import DOM (DOM())
+import Control.Monad.Eff
+import Control.Monad.Eff.JQuery (JQuery())
 
 type Options =
   { highlight   :: Boolean
@@ -23,11 +25,14 @@ type ClassNames =
   }
 
 type Dataset =
-  { source : Source }
+  { source :: Source
+  , name   :: String
+  }
 
+--foreign import data Source :: forall eff. String -> (Array String -> Eff (dom :: DOM) Unit) -> (Array String -> Eff (dom :: DOM) Unit)
 type Source =
   String ->
-  (Array String -> Eff (dom :: DOM | eff)) -> -- callback with sync results
-  (Array String -> Eff (dom :: DOM | eff))    -- callback with async results (use Aff somehow???)
+  (Array String -> Eff (dom :: DOM) Unit) -> -- callback with sync results
+  (Array String -> Eff (dom :: DOM) Unit)    -- callback with async results (use Aff somehow???)
 
-foreign import typeahead :: forall eff. JQuery -> Options -> Array Dataset -> JQuery
+foreign import typeahead :: forall eff. JQuery -> Options -> Array Dataset -> Eff (dom :: DOM | eff) JQuery
