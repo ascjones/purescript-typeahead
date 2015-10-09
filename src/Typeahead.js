@@ -11,4 +11,4 @@ exports.typeahead = function(ob) {
       };
     };
   };
-}
+};
