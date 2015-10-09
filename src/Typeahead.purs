@@ -10,11 +10,8 @@ type Options =
   { highlight   :: Boolean
   , hint        :: Boolean
   , minLength   :: Int
-  -- , classNames  :: ClassNames
+  , classNames  :: ClassNames
   }
-
-defaultOptions :: Options
-defaultOptions = { highlight : true, hint : false, minLength : 1 }
 
 type ClassNames =
   { input       :: String
@@ -33,7 +30,6 @@ type Dataset =
   , name   :: String
   }
 
---foreign import data Source :: forall eff. String -> (Array String -> Eff (dom :: DOM) Unit) -> (Array String -> Eff (dom :: DOM) Unit)
 type Source =
   Fn2
   String
@@ -41,8 +37,25 @@ type Source =
   -- (Array String -> Eff (dom :: DOM) Unit) -> -- callback with async results
   (Eff (dom :: DOM) Unit)
 
--- create the source function
--- source :: String -> (Array String -> Eff (dom :: DOM) Unit) -> Eff (dom :: DOM) Unit -> Source
--- source query syncResults asyncResults = mkFn2 query syncResults asyncResults
-
 foreign import typeahead :: forall eff. JQuery -> Options -> Array Dataset -> Eff (dom :: DOM | eff) JQuery
+
+defaultOptions :: Options
+defaultOptions =
+  { highlight   : true
+  , hint        : false
+  , minLength   : 1
+  , classNames  : defaultClassNames
+  }
+
+defaultClassNames :: ClassNames
+defaultClassNames =
+  { input       : "tt-input"
+  , hint        : "tt-hint"
+  , menu        : "tt-menu"
+  , dataset     : "tt-dataset"
+  , suggestion  : "tt-suggestion"
+  , empty       : "tt-empty"
+  , open        : "tt-open"
+  , cursor      : "tt-cursor"
+  , highlight   : "tt-highlight"
+  }

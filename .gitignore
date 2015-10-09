@@ -4,3 +4,4 @@
 /.psci*
 /src/.webpack.js
 psc.tix
+psc-bundle.tix
