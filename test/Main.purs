@@ -12,7 +12,7 @@ import Data.Function
 import qualified Control.Monad.Eff.JQuery as J
 
 main = do
-  states <- J.select "#main .states"
+  states <- J.select "#main .typeahead"
   typeahead states defaultOptions [{ name : "states", source : substringMatcher }]
 
   where
