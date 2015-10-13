@@ -12,3 +12,9 @@ exports.typeahead = function(ob) {
     };
   };
 };
+
+exports.getVal = function(ob) {
+  return function() {
+    return ob.typeahead('val');
+  }
+}

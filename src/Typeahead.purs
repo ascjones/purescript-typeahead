@@ -40,7 +40,12 @@ type Source =
 -- | The typeahead instance
 foreign import data Typeahead :: *
 
-foreign import typeahead :: forall eff. JQuery -> Options -> Array Dataset -> Eff (dom :: DOM | eff) Typeahead
+foreign import data TYPEAHEAD :: !
+
+foreign import typeahead :: forall eff. JQuery -> Options -> Array Dataset -> Eff (ta :: TYPEAHEAD | eff) Typeahead
+
+-- | Returns the current value of the typeahead. The value is the text the user has entered into the input element.
+foreign import getVal :: forall eff. Typeahead -> Eff (ta :: TYPEAHEAD | eff) String
 
 defaultOptions :: Options
 defaultOptions =
