@@ -37,7 +37,10 @@ type Source =
   (Array String -> Eff (dom :: DOM) Unit) -- callback with async results
   (Eff (dom :: DOM) Unit)
 
-foreign import typeahead :: forall eff. JQuery -> Options -> Array Dataset -> Eff (dom :: DOM | eff) JQuery
+-- | The typeahead instance
+foreign import data Typeahead :: *
+
+foreign import typeahead :: forall eff. JQuery -> Options -> Array Dataset -> Eff (dom :: DOM | eff) Typeahead
 
 defaultOptions :: Options
 defaultOptions =
