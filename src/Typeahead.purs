@@ -40,24 +40,22 @@ type Source =
 -- | The typeahead instance
 foreign import data Typeahead :: *
 
-foreign import data TYPEAHEAD :: !
-
-foreign import typeahead :: forall eff. JQuery -> Options -> Array Dataset -> Eff (ta :: TYPEAHEAD | eff) Typeahead
+foreign import typeahead :: forall eff. JQuery -> Options -> Array Dataset -> Eff (ta :: DOM | eff) Typeahead
 
 -- | Returns the current value of the typeahead. The value is the text the user has entered into the input element.
-foreign import getVal :: forall eff. Typeahead -> Eff (ta :: TYPEAHEAD | eff) String
+foreign import getVal :: forall eff. Typeahead -> Eff (ta :: DOM | eff) String
 
 -- | Sets the value of the typeahead
-foreign import setVal :: forall eff. Typeahead -> String -> Eff (ta :: TYPEAHEAD | eff) Unit
+foreign import setVal :: forall eff. Typeahead -> String -> Eff (ta :: DOM | eff) Unit
 
 -- | Opens the suggestion menu.
-foreign import open :: forall eff. Typeahead -> Eff (ta :: TYPEAHEAD | eff) Unit
+foreign import open :: forall eff. Typeahead -> Eff (ta :: DOM | eff) Unit
 
 -- | Closes the suggestion menu.
-foreign import close :: forall eff. Typeahead -> Eff (ta :: TYPEAHEAD | eff) Unit
+foreign import close :: forall eff. Typeahead -> Eff (ta :: DOM | eff) Unit
 
 -- | Removes typeahead functionality and reverts the input element back to its original state.
-foreign import destroy :: forall eff. Typeahead -> Eff (ta :: TYPEAHEAD | eff) Unit
+foreign import destroy :: forall eff. Typeahead -> Eff (ta :: DOM | eff) Unit
 
 defaultOptions :: Options
 defaultOptions =
