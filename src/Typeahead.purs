@@ -50,6 +50,15 @@ foreign import getVal :: forall eff. Typeahead -> Eff (ta :: TYPEAHEAD | eff) St
 -- | Sets the value of the typeahead
 foreign import setVal :: forall eff. Typeahead -> String -> Eff (ta :: TYPEAHEAD | eff) Unit
 
+-- | Opens the suggestion menu.
+foreign import open :: forall eff. Typeahead -> Eff (ta :: TYPEAHEAD | eff) Unit
+
+-- | Closes the suggestion menu.
+foreign import close :: forall eff. Typeahead -> Eff (ta :: TYPEAHEAD | eff) Unit
+
+-- | Removes typeahead functionality and reverts the input element back to its original state.
+foreign import destroy :: forall eff. Typeahead -> Eff (ta :: TYPEAHEAD | eff) Unit
+
 defaultOptions :: Options
 defaultOptions =
   { highlight   : true

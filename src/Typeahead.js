@@ -26,3 +26,21 @@ exports.setVal = function(ob) {
     }
   }
 };
+
+exports.open = function(ob) {
+  return function() {
+    return ob.typeahead('open');
+  }
+};
+
+exports.close = function(ob) {
+  return function() {
+    return ob.typeahead('close');
+  }
+};
+
+exports.destroy = function(ob) {
+  return function() {
+    return ob.typeahead('destroy');
+  }
+};
