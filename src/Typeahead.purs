@@ -47,6 +47,9 @@ foreign import typeahead :: forall eff. JQuery -> Options -> Array Dataset -> Ef
 -- | Returns the current value of the typeahead. The value is the text the user has entered into the input element.
 foreign import getVal :: forall eff. Typeahead -> Eff (ta :: TYPEAHEAD | eff) String
 
+-- | Sets the value of the typeahead
+foreign import setVal :: forall eff. Typeahead -> String -> Eff (ta :: TYPEAHEAD | eff) Unit
+
 defaultOptions :: Options
 defaultOptions =
   { highlight   : true
