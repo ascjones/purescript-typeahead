@@ -32,6 +32,6 @@ main = do
 
   where
   substringMatcher :: Array String -> Source
-  substringMatcher strs = mkFn2 $ \q cb -> do
+  substringMatcher strs = mkFn3 $ \q cb _ -> do
     let substrRegex = regex q (parseFlags "i")
     cb $ filter (test substrRegex) strs

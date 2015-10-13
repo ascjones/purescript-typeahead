@@ -31,10 +31,10 @@ type Dataset =
   }
 
 type Source =
-  Fn2
+  Fn3
   String
   (Array String -> Eff (dom :: DOM) Unit) -- callback with sync results
-  -- (Array String -> Eff (dom :: DOM) Unit) -> -- callback with async results
+  (Array String -> Eff (dom :: DOM) Unit) -- callback with async results
   (Eff (dom :: DOM) Unit)
 
 foreign import typeahead :: forall eff. JQuery -> Options -> Array Dataset -> Eff (dom :: DOM | eff) JQuery
