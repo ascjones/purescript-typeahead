@@ -3,7 +3,7 @@ module Typeahead where
 import Prelude
 import DOM (DOM())
 import Control.Monad.Eff
-import Control.Monad.Eff.JQuery (JQuery())
+import Control.Monad.Eff.JQuery (JQuery(), JQueryEvent())
 import Data.Function
 
 type Options =
@@ -37,6 +37,7 @@ type Source =
   (Array String -> Eff (dom :: DOM) Unit) -- callback with async results
   (Eff (dom :: DOM) Unit)
 
+
 -- | The typeahead instance
 foreign import data Typeahead :: *
 
@@ -56,6 +57,10 @@ foreign import close :: forall eff. Typeahead -> Eff (ta :: DOM | eff) Unit
 
 -- | Removes typeahead functionality and reverts the input element back to its original state.
 foreign import destroy :: forall eff. Typeahead -> Eff (ta :: DOM | eff) Unit
+
+type TypeaheadEvent = JQueryEvent
+
+foreign import select :: forall eff. (TypeaheadEvent -> String -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
 
 defaultOptions :: Options
 defaultOptions =

@@ -28,7 +28,9 @@ states =
 main = do
   statesInput <- J.select "#main .typeahead"
   let source = substringMatcher states
-  typeahead statesInput defaultOptions [{ name : "states", source : source }]
+  ta <- typeahead statesInput defaultOptions [{ name : "states", source : source }]
+
+  select (\_ sugg -> log $ "Suggestion selected: " ++ sugg) ta
 
   where
   substringMatcher :: Array String -> Source

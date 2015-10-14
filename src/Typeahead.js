@@ -44,3 +44,13 @@ exports.destroy = function(ob) {
     return ob.typeahead('destroy');
   }
 };
+
+exports.select = function(act) {
+  return function(ta) {
+    return function() {
+      return ta.on('typeahead:select', function(e, suggestion) {
+        act(e)(suggestion)();
+      });
+    }
+  }
+}
