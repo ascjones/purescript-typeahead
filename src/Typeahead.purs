@@ -25,18 +25,22 @@ type ClassNames =
   , highlight   :: String
   }
 
+type UpdateResults = Array String -> Eff (dom :: DOM) Unit
+
 type Dataset =
-  { source :: Source
+  { source :: Fn3 String UpdateResults UpdateResults (Eff (dom :: DOM) Unit)
   , name   :: String
   }
 
-type Source =
-  Fn3
-  String
-  (Array String -> Eff (dom :: DOM) Unit) -- callback with sync results
-  (Array String -> Eff (dom :: DOM) Unit) -- callback with async results
-  (Eff (dom :: DOM) Unit)
 
+type Source =
+  String
+  -> UpdateResults -- callback with sync results
+  -> UpdateResults -- callback with async results
+  -> (Eff (dom :: DOM) Unit)
+
+dataset :: String -> Source -> Dataset
+dataset name source = { name : name, source : mkFn3 source }
 
 -- | The typeahead instance
 foreign import data Typeahead :: *

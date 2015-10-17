@@ -27,13 +27,13 @@ states =
 
 main = do
   statesInput <- J.select "#main .typeahead"
-  let source = substringMatcher states
-  ta <- typeahead statesInput defaultOptions [{ name : "states", source : source }]
+  let statesData = dataset "states" $ substringMatcher states
+  ta <- typeahead statesInput defaultOptions [statesData]
 
   select (\_ sugg -> log $ "Suggestion selected: " ++ sugg) ta
 
   where
   substringMatcher :: Array String -> Source
-  substringMatcher strs = mkFn3 $ \q cb _ -> do
+  substringMatcher strs = \q cb _ -> do
     let substrRegex = regex q (parseFlags "i")
     cb $ filter (test substrRegex) strs
