@@ -31,8 +31,8 @@ type UpdateResults a = Array a -> Eff (dom :: DOM) Unit
 
 type Source a =
   String
-  -> UpdateResults a -- callback with sync resu lts
-  -> UpdateResults a -- callback with async   results
+  -> UpdateResults a -- callback with sync results
+  -> UpdateResults a -- callback with async results
   -> (Eff (dom :: DOM) Unit)
 
 type Dataset a =
@@ -70,7 +70,7 @@ foreign import destroy :: forall eff. Typeahead -> Eff (ta :: DOM | eff) Unit
 
 type TypeaheadEvent = JQueryEvent
 
-foreign import select :: forall eff. (TypeaheadEvent -> String -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
+foreign import select :: forall a eff. (TypeaheadEvent -> a -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
 
 defaultOptions :: Options
 defaultOptions =
