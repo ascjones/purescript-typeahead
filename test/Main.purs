@@ -13,8 +13,13 @@ import Data.String.Regex
 
 import qualified Control.Monad.Eff.JQuery as J
 
-states :: Array String
-states =
+newtype USState = USState String
+
+instance showUSState :: Show USState where
+  show (USState name) = name
+
+states :: Array USState
+states = USState <$>
   [ "Alabama", "Alaska", "Arizona", "Arkansas", "California"
   , "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii"
   , "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana"
@@ -23,7 +28,8 @@ states =
   , "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota"
   , "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island"
   , "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont"
-  , "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming" ]
+  , "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
+  ]
 
 main = do
   statesInput <- J.select "#main .typeahead"
@@ -33,7 +39,7 @@ main = do
   select (\_ sugg -> log $ "Suggestion selected: " ++ sugg) ta
 
   where
-  substringMatcher :: Array String -> Source
-  substringMatcher strs = \q cb _ -> do
+  substringMatcher :: forall a. (Show a) => Array a -> Source a
+  substringMatcher arr = \q cb _ -> do
     let substrRegex = regex q (parseFlags "i")
-    cb $ filter (test substrRegex) strs
+    cb $ filter (test substrRegex <<< show) arr
