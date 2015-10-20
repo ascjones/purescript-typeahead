@@ -2,9 +2,11 @@ module Typeahead where
 
 import Prelude
 import DOM (DOM())
+
+import Data.Function
+
 import Control.Monad.Eff
 import Control.Monad.Eff.JQuery (JQuery(), JQueryEvent())
-import Data.Function
 
 type Options =
   { highlight   :: Boolean
@@ -25,27 +27,31 @@ type ClassNames =
   , highlight   :: String
   }
 
-type UpdateResults = Array String -> Eff (dom :: DOM) Unit
+type UpdateResults a = Array a -> Eff (dom :: DOM) Unit
 
-type Dataset =
-  { source :: Fn3 String UpdateResults UpdateResults (Eff (dom :: DOM) Unit)
-  , name   :: String
-  }
-
-
-type Source =
+type Source a =
   String
-  -> UpdateResults -- callback with sync results
-  -> UpdateResults -- callback with async results
+  -> UpdateResults a -- callback with sync resu lts
+  -> UpdateResults a -- callback with async   results
   -> (Eff (dom :: DOM) Unit)
 
-dataset :: String -> Source -> Dataset
-dataset name source = { name : name, source : mkFn3 source }
+type Dataset a =
+  { source  :: Fn3 String (UpdateResults a) (UpdateResults a) (Eff (dom :: DOM) Unit)
+  , name    :: String
+  -- , limit   :: Int
+  , display :: a -> String
+  }
+
+dataset :: forall a. (Show a) => String -> Source a -> Dataset a
+dataset name source =
+  { name    : name
+  , source  : mkFn3 source
+  , display : show }
 
 -- | The typeahead instance
 foreign import data Typeahead :: *
 
-foreign import typeahead :: forall eff. JQuery -> Options -> Array Dataset -> Eff (ta :: DOM | eff) Typeahead
+foreign import typeahead :: forall a eff. JQuery -> Options -> Array (Dataset a) -> Eff (ta :: DOM | eff) Typeahead
 
 -- | Returns the current value of the typeahead. The value is the text the user has entered into the input element.
 foreign import getVal :: forall eff. Typeahead -> Eff (ta :: DOM | eff) String
