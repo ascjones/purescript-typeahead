@@ -86,9 +86,11 @@ onOpen = bindEventImpl1 "typeahead:open"
 onClose :: forall eff. BindEvent eff
 onClose = bindEventImpl1 "typeahead:close"
 
-foreign import bindEventImpl2 :: forall a eff. String -> (TypeaheadEvent -> a -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
+type BindEvent2 a eff = (TypeaheadEvent -> a -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
 
-onSelect :: forall a eff. (TypeaheadEvent -> a -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
+foreign import bindEventImpl2 :: forall a eff. String -> BindEvent2 a eff
+
+onSelect :: forall a eff. BindEvent2 a eff
 onSelect = bindEventImpl2 "typeahead:select"
 
 defaultOptions :: Options
