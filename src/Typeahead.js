@@ -45,6 +45,18 @@ exports.destroy = function(ob) {
   }
 };
 
+exports.bindEventImpl = function(name) {
+  return function(act) {
+    return function(ta) {
+      return function() {
+        return ta.on('typeahead:select', function(e) {
+          act(e)();
+        });
+      }
+    }
+  }
+}
+
 exports.select = function(act) {
   return function(ta) {
     return function() {

@@ -70,6 +70,13 @@ foreign import destroy :: forall eff. Typeahead -> Eff (ta :: DOM | eff) Unit
 
 type TypeaheadEvent = JQueryEvent
 
+foreign import bindEventImpl :: forall eff. String -> (TypeaheadEvent -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
+
+type BindEvent eff = (TypeaheadEvent -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
+
+active :: forall eff. BindEvent eff
+active = bindEventImpl "typeahead:active"
+
 foreign import select :: forall a eff. (TypeaheadEvent -> a -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
 
 defaultOptions :: Options

@@ -37,6 +37,7 @@ main = do
   ta <- typeahead statesInput defaultOptions [statesData]
 
   select (\_ sugg -> log $ "Suggestion selected: " ++ sugg) ta
+  active (\_ -> log "Active triggered") ta
 
   where
   substringMatcher :: forall a. (Show a) => Array a -> Source a
