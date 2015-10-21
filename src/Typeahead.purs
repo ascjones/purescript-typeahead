@@ -70,23 +70,26 @@ foreign import destroy :: forall eff. Typeahead -> Eff (ta :: DOM | eff) Unit
 
 type TypeaheadEvent = JQueryEvent
 
-foreign import bindEventImpl :: forall eff. String -> (TypeaheadEvent -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
+foreign import bindEventImpl1 :: forall eff. String -> (TypeaheadEvent -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
 
 type BindEvent eff = (TypeaheadEvent -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
 
 onActive :: forall eff. BindEvent eff
-onActive = bindEventImpl "typeahead:active"
+onActive = bindEventImpl1 "typeahead:active"
 
 onIdle :: forall eff. BindEvent eff
-onIdle = bindEventImpl "typeahead:idle"
+onIdle = bindEventImpl1 "typeahead:idle"
 
 onOpen :: forall eff. BindEvent eff
-onOpen = bindEventImpl "typeahead:open"
+onOpen = bindEventImpl1 "typeahead:open"
 
 onClose :: forall eff. BindEvent eff
-onClose = bindEventImpl "typeahead:close"
+onClose = bindEventImpl1 "typeahead:close"
 
-foreign import select :: forall a eff. (TypeaheadEvent -> a -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
+foreign import bindEventImpl2 :: forall a eff. String -> (TypeaheadEvent -> a -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
+
+onSelect :: forall a eff. (TypeaheadEvent -> a -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
+onSelect = bindEventImpl2 "typeahead:select"
 
 defaultOptions :: Options
 defaultOptions =

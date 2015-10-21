@@ -45,7 +45,7 @@ exports.destroy = function(ob) {
   }
 };
 
-exports.bindEventImpl = function(name) {
+exports.bindEventImpl1 = function(name) {
   return function(act) {
     return function(ta) {
       return function() {
@@ -57,12 +57,14 @@ exports.bindEventImpl = function(name) {
   }
 }
 
-exports.select = function(act) {
-  return function(ta) {
-    return function() {
-      return ta.on('typeahead:select', function(e, suggestion) {
-        act(e)(suggestion)();
-      });
+exports.bindEventImpl2 = function(name) {
+  return function(act) {
+    return function(ta) {
+      return function() {
+        return ta.on(name, function(e, arg1) {
+          act(e)(arg1)();
+        });
+      }
     }
   }
 }
