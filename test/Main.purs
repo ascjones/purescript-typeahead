@@ -38,6 +38,7 @@ main = do
 
   onSelect        (\_ sugg -> log $ "Suggestion selected: " ++ sugg) ta
   onAutocomplete  (\_ sugg -> log $ "Autocomplete triggered: " ++ sugg) ta
+  onCursorChange  (\_ sugg -> log $ "CursorChange triggered: " ++ sugg) ta
 
   onActive  (\_ -> log "Active triggered") ta
   onOpen    (\_ -> log "Open triggered") ta
