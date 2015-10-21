@@ -74,8 +74,17 @@ foreign import bindEventImpl :: forall eff. String -> (TypeaheadEvent -> Eff (do
 
 type BindEvent eff = (TypeaheadEvent -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
 
-active :: forall eff. BindEvent eff
-active = bindEventImpl "typeahead:active"
+onActive :: forall eff. BindEvent eff
+onActive = bindEventImpl "typeahead:active"
+
+onIdle :: forall eff. BindEvent eff
+onIdle = bindEventImpl "typeahead:idle"
+
+onOpen :: forall eff. BindEvent eff
+onOpen = bindEventImpl "typeahead:open"
+
+onClose :: forall eff. BindEvent eff
+onClose = bindEventImpl "typeahead:close"
 
 foreign import select :: forall a eff. (TypeaheadEvent -> a -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
 
