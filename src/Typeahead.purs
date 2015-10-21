@@ -93,6 +93,9 @@ foreign import bindEventImpl2 :: forall a eff. String -> BindEvent2 a eff
 onSelect :: forall a eff. BindEvent2 a eff
 onSelect = bindEventImpl2 "typeahead:select"
 
+onAutocomplete :: forall a eff. BindEvent2 a eff
+onAutocomplete = bindEventImpl2 "typeahead:autocomplete"
+
 defaultOptions :: Options
 defaultOptions =
   { highlight   : true
