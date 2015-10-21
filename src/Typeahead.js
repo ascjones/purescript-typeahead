@@ -49,7 +49,7 @@ exports.bindEventImpl = function(name) {
   return function(act) {
     return function(ta) {
       return function() {
-        return ta.on('typeahead:select', function(e) {
+        return ta.on(name, function(e) {
           act(e)();
         });
       }
