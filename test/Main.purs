@@ -36,14 +36,14 @@ main = do
   let statesData = dataset "states" $ substringMatcher states
   ta <- typeahead statesInput defaultOptions [statesData]
 
-  onSelect        (\_ sugg -> log $ "Suggestion selected: " ++ sugg) ta
-  onAutocomplete  (\_ sugg -> log $ "Autocomplete triggered: " ++ sugg) ta
-  onCursorChange  (\_ sugg -> log $ "CursorChange triggered: " ++ sugg) ta
+  onSelect       ta (\_ sugg -> log $ "Suggestion selected: " ++ sugg)
+  onAutocomplete ta (\_ sugg -> log $ "Autocomplete triggered: " ++ sugg)
+  onCursorChange ta (\_ sugg -> log $ "CursorChange triggered: " ++ sugg)
 
-  onActive  (\_ -> log "Active triggered") ta
-  onOpen    (\_ -> log "Open triggered") ta
-  onClose   (\_ -> log "Close triggered") ta
-  onIdle    (\_ -> log "Idle triggered") ta
+  onActive ta (\_ -> log "Active triggered")
+  onOpen   ta (\_ -> log "Open triggered")
+  onClose  ta (\_ -> log "Close triggered")
+  onIdle   ta (\_ -> log "Idle triggered")
 
   where
   substringMatcher :: forall a. (Show a) => Array a -> Source a

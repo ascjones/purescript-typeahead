@@ -70,7 +70,7 @@ foreign import destroy :: forall eff. Typeahead -> Eff (ta :: DOM | eff) Unit
 
 type TypeaheadEvent = JQueryEvent
 
-type BindEvent1 eff = (TypeaheadEvent -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
+type BindEvent1 eff = Typeahead -> (TypeaheadEvent -> Eff (dom :: DOM | eff) Unit) -> Eff (dom :: DOM | eff) Unit
 
 foreign import bindEventImpl1 :: forall eff. String -> BindEvent1 eff
 
@@ -86,7 +86,7 @@ onOpen = bindEventImpl1 "typeahead:open"
 onClose :: forall eff. BindEvent1 eff
 onClose = bindEventImpl1 "typeahead:close"
 
-type BindEvent2 a eff = (TypeaheadEvent -> a -> Eff (dom :: DOM | eff) Unit) -> Typeahead -> Eff (dom :: DOM | eff) Unit
+type BindEvent2 a eff = Typeahead -> (TypeaheadEvent -> a -> Eff (dom :: DOM | eff) Unit) -> Eff (dom :: DOM | eff) Unit
 
 foreign import bindEventImpl2 :: forall a eff. String -> BindEvent2 a eff
 

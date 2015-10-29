@@ -46,8 +46,8 @@ exports.destroy = function(ob) {
 };
 
 exports.bindEventImpl1 = function(name) {
-  return function(act) {
-    return function(ta) {
+  return function(ta) {
+    return function(act) {
       return function() {
         return ta.on(name, function(e) {
           act(e)();
@@ -58,8 +58,8 @@ exports.bindEventImpl1 = function(name) {
 }
 
 exports.bindEventImpl2 = function(name) {
-  return function(act) {
-    return function(ta) {
+  return function(ta) {
+    return function(act) {
       return function() {
         return ta.on(name, function(e, arg1) {
           act(e)(arg1)();
