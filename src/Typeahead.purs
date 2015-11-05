@@ -28,16 +28,16 @@ type ClassNames =
   , highlight   :: String
   }
 
-type UpdateResults a = Array a -> Eff (dom :: DOM) Unit
+type UpdateResults a = Array a -> Aff (dom :: DOM) Unit
 
 type Source a =
   String
   -> UpdateResults a -- callback with sync results
   -> UpdateResults a -- callback with async results
-  -> (Eff (dom :: DOM) Unit)
+  -> (Aff (dom :: DOM) Unit)
 
 type Dataset a =
-  { source  :: Fn3 String (UpdateResults a) (UpdateResults a) (Eff (dom :: DOM) Unit)
+  { source  :: Fn3 String (UpdateResults a) (UpdateResults a) (Aff (dom :: DOM) Unit)
   , name    :: String
   -- , limit   :: Int
   , display :: a -> String
@@ -50,7 +50,10 @@ dataset name source =
   , display : show }
 
 datasetSync :: forall a. (Show a) => String -> (String -> Array a) -> Dataset a
-datasetSync name getResults = dataset name (\q cb _ -> do cb $ getResults q )
+datasetSync name getResults = dataset name (\q cb _ -> do cb $ getResults q)
+
+datasetAsync :: forall a. (Show a) => String -> (String -> Aff (dom :: DOM) (Array a)) -> Dataset a
+datasetAsync name getResults = dataset name (\q _ cb -> getResults q >>= cb)
 
 -- | The typeahead instance
 foreign import data Typeahead :: *
