@@ -5,6 +5,7 @@ import DOM (DOM())
 
 import Data.Function
 
+import Control.Monad.Aff (Aff())
 import Control.Monad.Eff
 import Control.Monad.Eff.JQuery (JQuery(), JQueryEvent())
 
@@ -47,6 +48,9 @@ dataset name source =
   { name    : name
   , source  : mkFn3 source
   , display : show }
+
+datasetSync :: forall a. (Show a) => String -> (String -> Array a) -> Dataset a
+datasetSync name getResults = dataset name (\q cb _ -> do cb $ getResults q )
 
 -- | The typeahead instance
 foreign import data Typeahead :: *

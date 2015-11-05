@@ -33,7 +33,7 @@ states = USState <$>
 
 main = do
   statesInput <- J.select "#main .typeahead"
-  let statesData = dataset "states" $ substringMatcher states
+  let statesData = datasetSync "states" $ substringMatcher states
   ta <- typeahead statesInput defaultOptions [statesData]
 
   onSelect       ta (\_ sugg -> log $ "Suggestion selected: " ++ sugg)
@@ -46,7 +46,7 @@ main = do
   onIdle   ta (\_ -> log "Idle triggered")
 
   where
-  substringMatcher :: forall a. (Show a) => Array a -> Source a
-  substringMatcher arr = \q cb _ -> do
-    let substrRegex = regex q (parseFlags "i")
-    cb $ filter (test substrRegex <<< show) arr
+  substringMatcher :: forall a. (Show a) => Array a -> String -> Array a
+  substringMatcher arr q =
+    let substrRegex = regex q (parseFlags "i") in
+    filter (test substrRegex <<< show) arr

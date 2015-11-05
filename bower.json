@@ -14,6 +14,7 @@
     "purescript-console": "^0.1.0",
     "typeahead.js": "~0.11.1",
     "purescript-jquery": "~0.6.0",
-    "purescript-dom": "~0.2.6"
+    "purescript-dom": "~0.2.6",
+    "purescript-aff": "~0.13.0"
   }
 }
