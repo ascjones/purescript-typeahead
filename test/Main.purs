@@ -2,10 +2,14 @@ module Test.Main (main) where
 
 import Prelude
 
+import DOM (DOM())
 import Typeahead
 
+import Control.Monad.Aff
 import Control.Monad.Eff
+import Control.Monad.Eff.Class
 import Control.Monad.Eff.Console
+import Control.Monad.Eff.Exception (EXCEPTION())
 
 import Data.Array
 import Data.Function
@@ -31,9 +35,29 @@ states = USState <$>
   , "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
   ]
 
+substringMatcher :: forall a. (Show a) => Array a -> String -> Array a
+substringMatcher arr q =
+  let substrRegex = regex q (parseFlags "i") in
+  filter (test substrRegex <<< show) arr
+
+statesSource :: forall eff. Source USState (Eff (ex :: EXCEPTION, dom :: DOM | eff) Unit)
+statesSource q updateSync updateAsync = do
+  updateSync $ syncResults q
+  launchAff $ do
+    result <- asyncResults q
+    liftEff $ updateAsync result
+
+  where
+  syncResults :: String -> Array USState
+  syncResults = substringMatcher states
+
+  asyncResults :: String -> Aff (ex :: EXCEPTION) (Array USState)
+  asyncResults q = do
+    return $ substringMatcher [USState "Async State"] q
+
 main = do
   statesInput <- J.select "#main .typeahead"
-  let statesData = datasetSync "states" $ substringMatcher states
+  let statesData = dataset "states" statesSource
   ta <- typeahead statesInput defaultOptions [statesData]
 
   onSelect       ta (\_ sugg -> log $ "Suggestion selected: " ++ sugg)
@@ -44,9 +68,3 @@ main = do
   onOpen   ta (\_ -> log "Open triggered")
   onClose  ta (\_ -> log "Close triggered")
   onIdle   ta (\_ -> log "Idle triggered")
-
-  where
-  substringMatcher :: forall a. (Show a) => Array a -> String -> Array a
-  substringMatcher arr q =
-    let substrRegex = regex q (parseFlags "i") in
-    filter (test substrRegex <<< show) arr
