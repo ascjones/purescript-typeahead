@@ -28,37 +28,37 @@ type ClassNames =
   , highlight   :: String
   }
 
-type UpdateResults a = Array a -> Aff (dom :: DOM) Unit
+type UpdateResults a eff = Array a -> Aff (dom :: DOM | eff) Unit
 
-type Source a =
+type Source a eff =
   String
-  -> UpdateResults a -- callback with sync results
-  -> UpdateResults a -- callback with async results
-  -> (Aff (dom :: DOM) Unit)
+  -> UpdateResults a eff -- callback with sync results
+  -> UpdateResults a eff -- callback with async results
+  -> (Aff (dom :: DOM | eff) Unit)
 
-type Dataset a =
-  { source  :: Fn3 String (UpdateResults a) (UpdateResults a) (Aff (dom :: DOM) Unit)
+type Dataset a eff =
+  { source  :: Fn3 String (UpdateResults a eff) (UpdateResults a eff) (Aff (dom :: DOM | eff) Unit)
   , name    :: String
   -- , limit   :: Int
   , display :: a -> String
   }
 
-dataset :: forall a. (Show a) => String -> Source a -> Dataset a
+dataset :: forall a eff. (Show a) => String -> Source a eff -> Dataset a eff
 dataset name source =
   { name    : name
   , source  : mkFn3 source
   , display : show }
 
-datasetSync :: forall a. (Show a) => String -> (String -> Array a) -> Dataset a
+datasetSync :: forall a eff. (Show a) => String -> (String -> Array a) -> Dataset a eff
 datasetSync name getResults = dataset name (\q cb _ -> do cb $ getResults q)
 
-datasetAsync :: forall a. (Show a) => String -> (String -> Aff (dom :: DOM) (Array a)) -> Dataset a
+datasetAsync :: forall a eff. (Show a) => String -> (String -> Aff (dom :: DOM | eff) (Array a)) -> Dataset a eff
 datasetAsync name getResults = dataset name (\q _ cb -> getResults q >>= cb)
 
 -- | The typeahead instance
 foreign import data Typeahead :: *
 
-foreign import typeahead :: forall a eff. JQuery -> Options -> Array (Dataset a) -> Eff (ta :: DOM | eff) Typeahead
+foreign import typeahead :: forall a eff. JQuery -> Options -> Array (Dataset a eff) -> Eff (ta :: DOM | eff) Typeahead
 
 -- | Returns the current value of the typeahead. The value is the text the user has entered into the input element.
 foreign import getVal :: forall eff. Typeahead -> Eff (ta :: DOM | eff) String
