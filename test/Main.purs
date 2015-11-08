@@ -42,8 +42,8 @@ substringMatcher arr q =
 
 statesSource :: Source USState (console :: CONSOLE)
 statesSource q updateSync updateAsync = do
-  -- updateSync $ syncResults q
-  runAff (\err -> log "ERROR") updateAsync (asyncResults q)
+  pure $ updateSync $ syncResults q
+  runAff (\err -> log $ show err) updateAsync (asyncResults q)
 
   where
   syncResults :: String -> Array USState
@@ -51,7 +51,7 @@ statesSource q updateSync updateAsync = do
 
   asyncResults :: String -> Aff (dom :: DOM, console :: CONSOLE) (Array USState)
   asyncResults q = do
-  pure [USState "Async"] -- $ substringMatcher [USState "Async State"] q
+    pure [USState "Async"] -- $ substringMatcher [USState "Async State"] q
 
 main = do
   statesInput <- J.select "#main .typeahead"

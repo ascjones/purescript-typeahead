@@ -44,12 +44,14 @@ type Dataset a eff =
 dataset :: forall a eff. (Show a) => String -> Source a eff -> Dataset a eff
 dataset name source =
   { name    : name
-  , source  : mkFn3 source
+  , source  : mkSource source
   , display : show
   }
 
 -- | The typeahead instance
 foreign import data Typeahead :: *
+
+foreign import mkSource :: forall a eff. Source a eff -> Fn3 String (UpdateResults a eff) (UpdateResults a eff) (Eff (dom :: DOM | eff) Unit)
 
 foreign import typeahead :: forall a eff. JQuery -> Options -> Array (Dataset a eff) -> Eff (dom :: DOM | eff) Typeahead
 

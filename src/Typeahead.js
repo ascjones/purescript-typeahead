@@ -13,6 +13,12 @@ exports.typeahead = function(ob) {
   };
 };
 
+exports.mkSource = function (sourceEff) {
+  return function(q, syncCallback, asyncCallback) {
+    return sourceEff(q)(syncCallback)(asyncCallback)();
+  }
+}
+
 exports.getVal = function(ob) {
   return function() {
     return ob.typeahead('val');
