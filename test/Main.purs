@@ -40,20 +40,20 @@ substringMatcher arr q =
   let substrRegex = regex q (parseFlags "i") in
   filter (test substrRegex <<< show) arr
 
-statesSource :: forall eff. Source USState (Eff (ex :: EXCEPTION, dom :: DOM | eff) Unit)
+statesSource :: Source USState (console :: CONSOLE)
 statesSource q updateSync updateAsync = do
   updateSync $ syncResults q
-  launchAff $ do
-    result <- asyncResults q
-    liftEff $ updateAsync result
+  -- runAff (\err -> log "ERROR") updateAsync (asyncResults q)
+  -- launchAff $ do
+  --   updateAsync $ pure $ USState "Async"
 
   where
   syncResults :: String -> Array USState
   syncResults = substringMatcher states
 
-  asyncResults :: String -> Aff (ex :: EXCEPTION) (Array USState)
+  asyncResults :: String -> Aff (dom :: DOM, console :: CONSOLE) (Array USState)
   asyncResults q = do
-    return $ substringMatcher [USState "Async State"] q
+    pure [USState "Async"] -- $ substringMatcher [USState "Async State"] q
 
 main = do
   statesInput <- J.select "#main .typeahead"
@@ -61,10 +61,10 @@ main = do
   ta <- typeahead statesInput defaultOptions [statesData]
 
   onSelect       ta (\_ sugg -> log $ "Suggestion selected: " ++ sugg)
-  onAutocomplete ta (\_ sugg -> log $ "Autocomplete triggered: " ++ sugg)
-  onCursorChange ta (\_ sugg -> log $ "CursorChange triggered: " ++ sugg)
-
-  onActive ta (\_ -> log "Active triggered")
-  onOpen   ta (\_ -> log "Open triggered")
-  onClose  ta (\_ -> log "Close triggered")
-  onIdle   ta (\_ -> log "Idle triggered")
+  -- onAutocomplete ta (\_ sugg -> log $ "Autocomplete triggered: " ++ sugg)
+  -- onCursorChange ta (\_ sugg -> log $ "CursorChange triggered: " ++ sugg)
+  --
+  -- onActive ta (\_ -> log "Active triggered")
+  -- onOpen   ta (\_ -> log "Open triggered")
+  -- onClose  ta (\_ -> log "Close triggered")
+  -- onIdle   ta (\_ -> log "Idle triggered")
