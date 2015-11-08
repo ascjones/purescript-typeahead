@@ -53,6 +53,7 @@ statesSource q updateSync updateAsync = do
   asyncResults q = do
     pure [USState "Async"] -- $ substringMatcher [USState "Async State"] q
 
+main :: Eff (console :: CONSOLE, dom :: DOM) Unit
 main = do
   statesInput <- J.select "#main .typeahead"
   let statesData = dataset "states" statesSource
