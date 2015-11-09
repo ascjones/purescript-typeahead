@@ -22,14 +22,19 @@ newtype USState = USState String
 instance showUSState :: Show USState where
   show (USState name) = name
 
-states :: Array USState
-states = USState <$>
+-- the states that will be supplied as results to the callback for synchrounous results
+statesSync :: Array USState
+statesSync = USState <$>
   [ "Alabama", "Alaska", "Arizona", "Arkansas", "California"
   , "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii"
   , "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana"
   , "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota"
   , "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire"
-  , "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota"
+  ]
+
+statesAsync :: Array USState
+statesAsync = USState <$>
+  [ "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota"
   , "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island"
   , "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont"
   , "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
@@ -47,11 +52,12 @@ statesSource q updateSync updateAsync = do
 
   where
   syncResults :: String -> Array USState
-  syncResults = substringMatcher states
+  syncResults = substringMatcher statesSync
 
+  -- simulate async call, would most likely be an AJAX call in practice
   asyncResults :: String -> Aff (dom :: DOM, console :: CONSOLE) (Array USState)
   asyncResults q = do
-    pure [USState "Async"] -- $ substringMatcher [USState "Async State"] q
+    return $ substringMatcher statesAsync q
 
 main :: Eff (console :: CONSOLE, dom :: DOM) Unit
 main = do
