@@ -42,7 +42,7 @@ substringMatcher arr q =
 
 statesSource :: Source USState (console :: CONSOLE)
 statesSource q updateSync updateAsync = do
-  pure $ updateSync $ syncResults q
+  updateSync $ syncResults q
   runAff (\err -> log $ show err) updateAsync (asyncResults q)
 
   where
