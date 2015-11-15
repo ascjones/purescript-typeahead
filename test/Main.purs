@@ -48,8 +48,8 @@ substringMatcher arr q =
 statesSource
   :: forall eff
    . String
-  -> UpdateResults USState eff
-  -> UpdateResults USState eff
+  -> UpdateResults USState (console :: CONSOLE | eff)
+  -> UpdateResults USState (console :: CONSOLE | eff)
   -> Eff (dom :: DOM, console :: CONSOLE | eff) Unit
 statesSource q updateSync updateAsync = do
   updateSync $ syncResults q

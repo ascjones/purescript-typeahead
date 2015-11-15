@@ -28,7 +28,7 @@ type ClassNames =
   , highlight   :: String
   }
 
-type UpdateResults a eff = forall a eff. Array a -> Eff (dom :: DOM | eff) Unit
+type UpdateResults a eff = Array a -> Eff (dom :: DOM | eff) Unit
 
 -- type Source a eff =
 --   String
@@ -49,7 +49,7 @@ mkDataset
    . (Show a)
   => String
   -> (String -> (UpdateResults a eff) -> (UpdateResults a eff) -> Eff (dom :: DOM | eff) Unit)
-  -> Dataset a
+  -> Dataset a eff
 mkDataset name source =
   { name    : name
   , source  : callback3 source --(\q sync async -> source q (callback1 sync) (callback1 async))
