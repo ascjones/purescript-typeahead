@@ -28,7 +28,7 @@ type ClassNames =
   , highlight   :: String
   }
 
-type UpdateResults a eff = Array a -> Eff (dom :: DOM | eff) Unit
+-- type UpdateResults a eff = forall a eff. Array a -> Eff (dom :: DOM | eff) Unit
 
 -- type Source a eff =
 --   String
@@ -36,33 +36,51 @@ type UpdateResults a eff = Array a -> Eff (dom :: DOM | eff) Unit
 --   -> UpdateResults a eff -- callback with async results
 --   -> Eff (dom :: DOM | eff) Unit
 
+newtype UpdateResults a = UpdateResults (Callback1 (Array a) Unit)
+
 type Dataset a =
-  { source  :: Fn3 String (Callback1 (Array a) Unit) (Callback1 (Array a) Unit) Unit
+  { source  :: Callback3 String (UpdateResults a) (UpdateResults a) Unit
   , name    :: String
   , display :: a -> String
   }
 
-dataset
+mkDataset
   :: forall a eff
    . (Show a)
   => String
-  -> (String -> UpdateResults a eff -> UpdateResults a eff -> Eff (dom :: DOM | eff) Unit)
-  -> Dataset a eff
-dataset name source =
+  -> (String -> (Array a -> Eff (dom :: DOM | eff) Unit) -> (Array a -> Eff (dom :: DOM | eff) Unit) -> Eff (dom :: DOM | eff) Unit)
+  -> Dataset a
+mkDataset name source =
   { name    : name
-  , source  : mkSource source
+  , source  : callback3 source --(\q sync async -> source q (callback1 sync) (callback1 async))
   , display : show
   }
 
-  where
-  mkSource source = mkFn3 (\q sync async -> callback1)
+  -- where
+  -- mkSource
+  --   :: String
+  --   -> (Array a -> Eff (dom :: DOM | eff) Unit)
+  --   -> (Array a -> Eff (dom :: DOM | eff) Unit)
+  --   -> Eff (dom :: DOM | eff) Unit)
+  --   -> (Callback3 String (UpdateResults a) (UpdateResults a) Unit)
+  -- mkSource q sync async
+  --
+  -- mkUpdateResults :: (Array a -> Eff (dom :: DOM | eff) Unit) -> UpdateResults a
+  -- mkUpdateResults = UpdateResults <<< callback1
+
+
+  -- where
+  -- sourceCallback :: Callback3 String (UpdateResults a eff) (UpdateResults a eff) Unit
+  -- sourceCallback = callback3 (\q sync async -> do
+    -- source q (runFn1 sync) (runFn1 async))
+    -- source q (\res -> do sync res) (\res -> do async res))
 
 -- | The typeahead instance
 foreign import data Typeahead :: *
 
-foreign import mkSource :: forall a eff. Source a eff -> Fn3 String (UpdateResults a eff) (UpdateResults a eff) (Eff (dom :: DOM | eff) Unit)
+-- foreign import mkSource :: forall a eff. Source a eff -> Fn3 String (UpdateResults a eff) (UpdateResults a eff) (Eff (dom :: DOM | eff) Unit)
 
-foreign import typeahead :: forall a eff. JQuery -> Options -> Array (Dataset a eff) -> Eff (dom :: DOM | eff) Typeahead
+foreign import typeahead :: forall a eff. JQuery -> Options -> Array (Dataset a) -> Eff (dom :: DOM | eff) Typeahead
 
 -- | Returns the current value of the typeahead. The value is the text the user has entered into the input element.
 foreign import getVal :: forall eff. Typeahead -> Eff (ta :: DOM | eff) String

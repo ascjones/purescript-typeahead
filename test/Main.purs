@@ -45,7 +45,12 @@ substringMatcher arr q =
   let substrRegex = regex q (parseFlags "i") in
   filter (test substrRegex <<< show) arr
 
-statesSource :: Source USState (console :: CONSOLE)
+statesSource
+  :: forall eff
+   . String
+  -> UpdateResults USState eff
+  -> UpdateResults USState eff
+  -> Eff (dom :: DOM, console :: CONSOLE | eff) Unit
 statesSource q updateSync updateAsync = do
   updateSync $ syncResults q
   runAff (\err -> log $ show err) updateAsync (asyncResults q)
@@ -55,14 +60,14 @@ statesSource q updateSync updateAsync = do
   syncResults = substringMatcher statesSync
 
   -- simulate async call, would most likely be an AJAX call in practice
-  asyncResults :: String -> Aff (dom :: DOM, console :: CONSOLE) (Array USState)
+  asyncResults :: forall eff. String -> Aff eff (Array USState)
   asyncResults q = do
     return $ substringMatcher statesAsync q
 
-main :: Eff (console :: CONSOLE, dom :: DOM) Unit
+main :: Eff (dom :: DOM, console :: CONSOLE) Unit
 main = do
   statesInput <- J.select "#main .typeahead"
-  let statesData = dataset "states" statesSource
+  let statesData = mkDataset "states" statesSource
   ta <- typeahead statesInput defaultOptions [statesData]
 
   onSelect       ta (\_ sugg -> log $ "Suggestion selected: " ++ sugg)
