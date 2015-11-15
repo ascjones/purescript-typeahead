@@ -4,6 +4,7 @@ import Prelude
 import DOM (DOM())
 
 import Data.Function
+import Data.Foreign.Callback
 
 import Control.Monad.Eff
 import Control.Monad.Eff.JQuery (JQuery(), JQueryEvent())
@@ -29,24 +30,32 @@ type ClassNames =
 
 type UpdateResults a eff = Array a -> Eff (dom :: DOM | eff) Unit
 
-type Source a eff =
-  String
-  -> UpdateResults a eff -- callback with sync results
-  -> UpdateResults a eff -- callback with async results
-  -> Eff (dom :: DOM | eff) Unit
+-- type Source a eff =
+--   String
+--   -> UpdateResults a eff -- callback with sync results
+--   -> UpdateResults a eff -- callback with async results
+--   -> Eff (dom :: DOM | eff) Unit
 
-type Dataset a eff =
-  { source  :: Fn3 String (UpdateResults a eff) (UpdateResults a eff) (Eff (dom :: DOM | eff) Unit)
+type Dataset a =
+  { source  :: Fn3 String (Callback1 (Array a) Unit) (Callback1 (Array a) Unit) Unit
   , name    :: String
   , display :: a -> String
   }
 
-dataset :: forall a eff. (Show a) => String -> Source a eff -> Dataset a eff
+dataset
+  :: forall a eff
+   . (Show a)
+  => String
+  -> (String -> UpdateResults a eff -> UpdateResults a eff -> Eff (dom :: DOM | eff) Unit)
+  -> Dataset a eff
 dataset name source =
   { name    : name
   , source  : mkSource source
   , display : show
   }
+
+  where
+  mkSource source = mkFn3 (\q sync async -> callback1)
 
 -- | The typeahead instance
 foreign import data Typeahead :: *
