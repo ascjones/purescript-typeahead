@@ -28,7 +28,7 @@ type ClassNames =
   , highlight   :: String
   }
 
--- type UpdateResults a eff = forall a eff. Array a -> Eff (dom :: DOM | eff) Unit
+type UpdateResults a eff = forall a eff. Array a -> Eff (dom :: DOM | eff) Unit
 
 -- type Source a eff =
 --   String
@@ -36,10 +36,10 @@ type ClassNames =
 --   -> UpdateResults a eff -- callback with async results
 --   -> Eff (dom :: DOM | eff) Unit
 
-newtype UpdateResults a = UpdateResults (Callback1 (Array a) Unit)
+-- newtype UpdateResults a = UpdateResults (Callback1 (Array a) Unit)
 
-type Dataset a =
-  { source  :: Callback3 String (UpdateResults a) (UpdateResults a) Unit
+type Dataset a eff =
+  { source  :: Callback3 String (UpdateResults a eff) (UpdateResults a eff) Unit
   , name    :: String
   , display :: a -> String
   }
@@ -48,7 +48,7 @@ mkDataset
   :: forall a eff
    . (Show a)
   => String
-  -> (String -> (Array a -> Eff (dom :: DOM | eff) Unit) -> (Array a -> Eff (dom :: DOM | eff) Unit) -> Eff (dom :: DOM | eff) Unit)
+  -> (String -> (UpdateResults a eff) -> (UpdateResults a eff) -> Eff (dom :: DOM | eff) Unit)
   -> Dataset a
 mkDataset name source =
   { name    : name
@@ -80,7 +80,7 @@ foreign import data Typeahead :: *
 
 -- foreign import mkSource :: forall a eff. Source a eff -> Fn3 String (UpdateResults a eff) (UpdateResults a eff) (Eff (dom :: DOM | eff) Unit)
 
-foreign import typeahead :: forall a eff. JQuery -> Options -> Array (Dataset a) -> Eff (dom :: DOM | eff) Typeahead
+foreign import typeahead :: forall a eff. JQuery -> Options -> Array (Dataset a eff) -> Eff (dom :: DOM | eff) Typeahead
 
 -- | Returns the current value of the typeahead. The value is the text the user has entered into the input element.
 foreign import getVal :: forall eff. Typeahead -> Eff (ta :: DOM | eff) String
