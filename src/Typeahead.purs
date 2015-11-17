@@ -28,12 +28,10 @@ type ClassNames =
   , highlight   :: String
   }
 
--- type UpdateResults a eff = Array a -> Eff (dom :: DOM | eff) Unit
-
-type UpdateResults a = Callback1 (Array a) Unit
+type UpdateResults a eff = Array a -> Eff (dom :: DOM | eff) Unit
 
 type Dataset a =
-  { source  :: Callback3 String (UpdateResults a) (UpdateResults a) Unit
+  { source  :: Callback3 String (Callback1 (Array a) Unit) (Callback1 (Array a) Unit) Unit
   , name    :: String
   , display :: a -> String
   }
@@ -42,37 +40,19 @@ mkDataset
   :: forall a eff
    . (Show a)
   => String
-  -> (String -> (UpdateResults a) -> (UpdateResults a) -> Eff (dom :: DOM | eff) Unit)
+  -> (String -> (UpdateResults a eff) -> (UpdateResults a eff) -> Eff (dom :: DOM | eff) Unit)
   -> Dataset a
 mkDataset name source =
   { name    : name
-  , source  : callback3 source
+  , source  : callback3 \q sync async -> source q (mkUpdateResults sync) (mkUpdateResults async)
   , display : show
   }
-
-  -- where
-  -- mkSource
-  --   :: String
-  --   -> (Array a -> Eff (dom :: DOM | eff) Unit)
-  --   -> (Array a -> Eff (dom :: DOM | eff) Unit)
-  --   -> Eff (dom :: DOM | eff) Unit)
-  --   -> (Callback3 String (UpdateResults a) (UpdateResults a) Unit)
-  -- mkSource q sync async
-  --
-  -- mkUpdateResults :: (Array a -> Eff (dom :: DOM | eff) Unit) -> UpdateResults a
-  -- mkUpdateResults = UpdateResults <<< callback1
-
-
-  -- where
-  -- sourceCallback :: Callback3 String (UpdateResults a eff) (UpdateResults a eff) Unit
-  -- sourceCallback = callback3 (\q sync async -> do
-    -- source q (runFn1 sync) (runFn1 async))
-    -- source q (\res -> do sync res) (\res -> do async res))
 
 -- | The typeahead instance
 foreign import data Typeahead :: *
 
--- foreign import mkSource :: forall a eff. Source a eff -> Fn3 String (UpdateResults a eff) (UpdateResults a eff) (Eff (dom :: DOM | eff) Unit)
+-- wrap the callback function supplied by typeahead into an effectual UpdateResults function
+foreign import mkUpdateResults :: forall a eff. (Callback1 (Array a) Unit) -> UpdateResults a eff
 
 foreign import typeahead :: forall a eff. JQuery -> Options -> Array (Dataset a) -> Eff (dom :: DOM | eff) Typeahead
 

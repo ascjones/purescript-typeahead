@@ -13,21 +13,13 @@ exports.typeahead = function(ob) {
   };
 };
 
-exports.mkSource = function (sourceEff) {
-  return function(q, syncCallback, asyncCallback) {
-    return sourceEff(q)
-      (function(res) {
-        return function() {
-          return syncCallback(res);
-        };
-      })
-      (function(res) {
-        return function() {
-          return asyncCallback(res);
-        };
-      })();
-  }
-}
+exports.mkUpdateResults = function (cb) {
+  return function(res) {
+    return function() {
+      return cb(res)
+    };
+  };
+};
 
 exports.getVal = function(ob) {
   return function() {
