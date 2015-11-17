@@ -16,5 +16,6 @@
     "purescript-jquery": "~0.6.0",
     "purescript-dom": "~0.2.6",
     "purescript-aff": "~0.13.0",
+    "purescript-foreign-callbacks": "https://github.com/fluffynukeit/purescript-foreign-callbacks.git#master"
   }
 }
