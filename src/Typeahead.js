@@ -3,6 +3,14 @@
 
 // module Typeahead
 
+exports.callback1 = function(fn) {
+  return function(a) { return fn(a)(); };
+};
+
+exports.callback3 = function(fn) {
+  return function(a,b,c) { return fn(a)(b)(c)(); };
+};
+
 exports.typeahead = function(ob) {
   return function(opts) {
     return function(datasets) {

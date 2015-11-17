@@ -4,7 +4,6 @@ import Prelude
 import DOM (DOM())
 
 import Data.Function
-import Data.Foreign.Callback
 
 import Control.Monad.Eff
 import Control.Monad.Eff.JQuery (JQuery(), JQueryEvent())
@@ -50,6 +49,12 @@ mkDataset name source =
 
 -- | The typeahead instance
 foreign import data Typeahead :: *
+
+-- callback definitions, rename to better local types or just use purescript-foreign-callbacks
+foreign import data Callback1 :: * -> * -> *
+foreign import data Callback3 :: * -> * -> * -> * -> *
+foreign import callback1 :: forall z r a. (a -> Eff z r) -> Callback1 a r
+foreign import callback3 :: forall z r a b c. (a -> b -> c -> Eff z r) -> Callback3 a b c r
 
 -- wrap the callback function supplied by typeahead into an effectual UpdateResults function
 foreign import mkUpdateResults :: forall a eff. (Callback1 (Array a) Unit) -> UpdateResults a eff
