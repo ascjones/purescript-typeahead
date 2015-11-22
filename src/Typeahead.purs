@@ -4,6 +4,7 @@ import Prelude
 import DOM (DOM())
 
 import Data.Function
+import Data.Foreign.Callback
 
 import Control.Monad.Eff
 import Control.Monad.Eff.JQuery (JQuery(), JQueryEvent())
@@ -29,18 +30,15 @@ type ClassNames =
 
 type UpdateResults a eff = Array a -> Eff (dom :: DOM | eff) Unit
 
+type Source a eff = String -> (UpdateResults a eff) -> (UpdateResults a eff) -> Eff (dom :: DOM | eff) Unit
+
 type Dataset a =
   { source  :: Callback3 String (Callback1 (Array a) Unit) (Callback1 (Array a) Unit) Unit
   , name    :: String
   , display :: a -> String
   }
 
-mkDataset
-  :: forall a eff
-   . (Show a)
-  => String
-  -> (String -> (UpdateResults a eff) -> (UpdateResults a eff) -> Eff (dom :: DOM | eff) Unit)
-  -> Dataset a
+mkDataset :: forall a eff . (Show a) => String -> Source a eff -> Dataset a
 mkDataset name source =
   { name    : name
   , source  : callback3 \q sync async -> source q (mkUpdateResults sync) (mkUpdateResults async)
@@ -49,12 +47,6 @@ mkDataset name source =
 
 -- | The typeahead instance
 foreign import data Typeahead :: *
-
--- callback definitions, rename to better local types or just use purescript-foreign-callbacks
-foreign import data Callback1 :: * -> * -> *
-foreign import data Callback3 :: * -> * -> * -> * -> *
-foreign import callback1 :: forall z r a. (a -> Eff z r) -> Callback1 a r
-foreign import callback3 :: forall z r a b c. (a -> b -> c -> Eff z r) -> Callback3 a b c r
 
 -- wrap the callback function supplied by typeahead into an effectual UpdateResults function
 foreign import mkUpdateResults :: forall a eff. (Callback1 (Array a) Unit) -> UpdateResults a eff

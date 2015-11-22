@@ -45,12 +45,7 @@ substringMatcher arr q =
   let substrRegex = regex q (parseFlags "i") in
   filter (test substrRegex <<< show) arr
 
-statesSource
-  :: forall eff
-   . String
-  -> UpdateResults USState (console :: CONSOLE | eff)
-  -> UpdateResults USState (console :: CONSOLE | eff)
-  -> Eff (dom :: DOM, console :: CONSOLE | eff) Unit
+statesSource :: Source USState (console :: CONSOLE)
 statesSource q updateSync updateAsync = do
   updateSync $ syncResults q
   runAff (\err -> log $ show err) updateAsync (asyncResults q)
